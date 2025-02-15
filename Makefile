@@ -1,35 +1,32 @@
-BOOTLOADER = boot.bin
-KERNEL = kernel.bin
-ISO = AngaOS.iso
+# Build System - Glue That Holds Everything Together
 
-ASM = nasm
-CC = gcc
-LD = ld
-QEMU = qemu-system-x86_64
+# Compiler and flags for building the kernel
+CC = i686-elf-gcc
+CFLAGS = -ffreestanding -nostdlib -Wall -Wextra
 
-ASM_FLAGS = -f bin
-CC_FLAGS = -m32 -ffreestanding -nostdlib
-LD_FLAGS = -m elf_i386 -Ttext 0x1000 --oformat binary
+# Default target: Build the OS image
+all: os-image
 
-all: run
+# Combine the bootloader and kernel into a single OS image
+os-image: boot/boot.bin kernel.bin
+    cat $^ > os-image  # Concatenate bootloader and kernel
+    truncate -s 1440k os-image  # Resize to 1.44MB (floppy disk size 🥏)
 
-$(BOOTLOADER): boot.asm
-	$(ASM) $(ASM_FLAGS) -o $@ $<
+# Assemble the bootloader
+boot/boot.bin:
+    nasm -f bin boot/boot.asm -o boot/boot.bin  # Assemble bootloader to binary format
 
-$(KERNEL): kernel.c
-	$(CC) $(CC_FLAGS) -o kernel.o -c $<
-	$(LD) $(LD_FLAGS) -o $@ kernel.o
+# Link the kernel object files into a single binary
+kernel.bin: kernel/kernel_entry.o kernel/kernel.o kernel/screen.o
+    i686-elf-ld -o $@ -Ttext 0x1000 $^  # Link kernel at memory address 0x1000 🔗
 
-$(ISO): $(BOOTLOADER) $(KERNEL)
-	dd if=/dev/zero of=floppy.img bs=512 count=2880
-	dd if=$(BOOTLOADER) of=floppy.img conv=notrunc
-	dd if=$(KERNEL) of=floppy.img bs=512 seek=1 conv=notrunc
-	mkisofs -o $@ -b floppy.img .
+# Run the OS in QEMU (emulator)
+run:
+    qemu-system-i386 -fda os-image  # Boot the OS image in a virtual machine 🖥️
 
-run: $(ISO)
-	$(QEMU) -cdrom $<
-
+# Clean up build artifacts
 clean:
-	rm -f $(BOOTLOADER) $(KERNEL) $(ISO) floppy.img kernel.o
+    rm -f *.bin *.o os-image boot/*.bin kernel/*.o  # Remove binaries and object files
 
-.PHONY: all run clean
+# Declare phony targets (not actual files)
+.PHONY: all clean run
