@@ -52,9 +52,9 @@ jmp CODE_SEG:protected_start ; Jump to protected mode code
 
 ; ------------------- Utilities -------------------
 ; This is where we include other files
-%include "print.asm"  # Borrow BIOS print functions
-%include "gdt.asm"    # Memory segmentation setup
-%include "disk.asm"   # Disk loading routines
+%include "./print.asm"  # Borrow BIOS print functions
+%include "./gdt.asm"    # Memory segmentation setup
+%include "./disk.asm"   # Disk loading routines
 
 ; ------------------- Data -------------------
 ; Where we define our strings
@@ -72,4 +72,4 @@ protected_start:
     mov es, ax
     mov ss, ax
     
-    jmp 0x1000:0x0    # Jump to kernel code
+    jmp CODE_SEG:0x10000  # Proper protected mode jump to kernel
