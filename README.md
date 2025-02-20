@@ -8,7 +8,7 @@
                    __/ |                    
                   |___/                     v1.0.0
 
->> AngaOS is a very bare bones implementation of an operating system
+>> AngaOS is a very bare bones implementation of a bootloader, kernel & operating system
 ```
 
 
