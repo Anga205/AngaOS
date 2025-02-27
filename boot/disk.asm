@@ -31,6 +31,6 @@ disk_load:
     ret                  ; Return to the caller
 
 .error:
-    mov si, error_msg    ; Load the address of the error message into SI
-    call print_string    ; Print the error message
-    jmp $                ; Hang the system (infinite loop)
+    mov si, disk_error_msg  ; Load the address of the error message into SI
+    call print_string       ; Print the error message
+    jmp $                   ; Hang the system (infinite loop)

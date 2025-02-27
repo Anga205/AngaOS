@@ -1,6 +1,5 @@
-; excuse the comments, I'm doing sum hella vibe coding rn
-; they're just here for me to remember what I was thinking
-; (this is where the bootloader begins btw)
+; THis is kinda like the main function of the OS
+; (the bootloader begins here)
 
 [org 0x7C00]      ; this means "load $everything at 0x7C00"
 ; 0x means this is a hexadecimal number
@@ -50,16 +49,15 @@ mov cr0, eax
 
 jmp CODE_SEG:protected_start ; Jump to protected mode code
 
-; ------------------- Utilities -------------------
-; This is where we include other files
-%include "./print.asm"  # Borrow BIOS print functions
-%include "./gdt.asm"    # Memory segmentation setup
-%include "./disk.asm"   # Disk loading routines
-
 ; ------------------- Data -------------------
 ; Where we define our strings
 hello_msg db 'AngaOS Booting...', 0
-error_msg db 'Disk Load Fail', 0
+disk_error_msg db 'Disk Load Fail', 0
+
+; ------------------- Utilities -------------------
+%include "print.asm"
+%include "gdt.asm"
+%include "disk.asm"
 
 ; Bootloader Signature
 times 510-($-$$) db 0  ; Padding to 510 bytes
@@ -72,4 +70,4 @@ protected_start:
     mov es, ax
     mov ss, ax
     
-    jmp CODE_SEG:0x10000  # Proper protected mode jump to kernel
+    jmp CODE_SEG:0x1000  # Proper protected mode jump to kernel
