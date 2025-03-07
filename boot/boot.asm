@@ -55,9 +55,9 @@ hello_msg db 'AngaOS Booting...', 0
 disk_error_msg db 'Disk Load Fail', 0
 
 ; ------------------- Utilities -------------------
-%include "print.asm"
-%include "gdt.asm"
-%include "disk.asm"
+%include "boot/print.asm"
+%include "boot/gdt.asm"
+%include "boot/disk.asm"
 
 ; Bootloader Signature
 times 510-($-$$) db 0  ; Padding to 510 bytes
@@ -70,4 +70,4 @@ protected_start:
     mov es, ax
     mov ss, ax
     
-    jmp CODE_SEG:0x1000  # Proper protected mode jump to kernel
+    jmp CODE_SEG:0x1000  ; Proper protected mode jump to kernel

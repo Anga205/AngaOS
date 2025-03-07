@@ -1,6 +1,10 @@
 # Compiler and flags for building the kernel
 CC = i686-elf-gcc
-CFLAGS = -ffreestanding -nostdlib -Wall -Wextra
+CFLAGS = -ffreestanding -nostdlib -Wall -Wextra -Ikernel/
+
+# Assembler and flags
+ASM = nasm
+ASMFLAGS = -f elf32
 
 # Default target: Build the OS image
 all: os-image
@@ -12,19 +16,28 @@ os-image: boot/boot.bin kernel.bin
 
 # Assemble the bootloader
 boot/boot.bin:
-	nasm -f bin boot/boot.asm -o boot/boot.bin
+	$(ASM) -f bin boot/boot.asm -o boot/boot.bin
 
-# Link the kernel object files into a single binary
+# Build kernel components
+kernel/kernel_entry.o: kernel/kernel_entry.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
+
+kernel/kernel.o: kernel/kernel.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+kernel/screen.o: kernel/screen.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+# Link the kernel
 kernel.bin: kernel/kernel_entry.o kernel/kernel.o kernel/screen.o
-	i686-elf-ld -o $@ -Ttext 0x1000 $^
+	i686-elf-ld -o $@ -Ttext 0x10000 $^
 
-# Run the OS in QEMU (emulator)
+# Run the OS in QEMU
 run:
 	qemu-system-i386 -fda os-image
 
-# Clean up build artifacts
+# Clean up
 clean:
 	rm -f *.bin *.o os-image boot/*.bin kernel/*.o
 
-# Declare phony targets (not actual files)
 .PHONY: all clean run
