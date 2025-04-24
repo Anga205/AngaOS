@@ -1,6 +1,6 @@
 # Compiler and flags for building the kernel
-CC = i686-elf-gcc
-CFLAGS = -ffreestanding -nostdlib -Wall -Wextra -Ikernel/
+CC = gcc
+CFLAGS = -m32 -ffreestanding -nostdlib -Wall -Wextra -Ikernel/
 
 # Assembler and flags
 ASM = nasm
@@ -30,7 +30,7 @@ kernel/screen.o: kernel/screen.c
 
 # Link the kernel
 kernel.bin: kernel/kernel_entry.o kernel/kernel.o kernel/screen.o
-	i686-elf-ld -o $@ -Ttext 0x10000 $^
+	ld -m elf_i386 -o kernel.bin -Ttext 0x10000 -e start $^
 
 # Run the OS in QEMU
 run:

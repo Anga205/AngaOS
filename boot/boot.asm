@@ -70,4 +70,4 @@ protected_start:
     mov es, ax
     mov ss, ax
     
-    jmp CODE_SEG:0x1000  ; Proper protected mode jump to kernel
+    jmp CODE_SEG:0x10000  ; Proper protected mode jump to kernel

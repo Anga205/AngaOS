@@ -1,27 +1,24 @@
 name: Makefile CI
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    push:
+        branches: [ "main" ]
+    pull_request:
+        branches: [ "main" ]
 
 jobs:
-  build:
+    build:
 
-    runs-on: ubuntu-latest
+        runs-on: ubuntu-latest
 
-    steps:
-    - uses: actions/checkout@v4
+        steps:
+        - uses: actions/checkout@v4
 
-    - name: configure
-      run: ./configure
+        - name: Install dependencies
+          run: make
 
-    - name: Install dependencies
-      run: make
+        - name: Run application
+          run: make run
 
-    - name: Run check
-      run: make check
-
-    - name: Run distcheck
-      run: make distcheck
+        - name: Clean up
+          run: make clean

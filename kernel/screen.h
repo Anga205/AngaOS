@@ -3,5 +3,6 @@
 
 void clear_screen();
 void print_string(const char *str);
+void print_logo(void);
 
 #endif
