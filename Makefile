@@ -30,7 +30,7 @@ kernel/screen.o: kernel/screen.c
 
 # Link the kernel
 kernel.bin: kernel/kernel_entry.o kernel/kernel.o kernel/screen.o
-	ld -m elf_i386 -o kernel.bin -Ttext 0x10000 -e start $^
+	ld -m elf_i386 -o kernel.bin -Ttext 0x10000 -e _start $^
 
 # Run the OS in QEMU
 run:

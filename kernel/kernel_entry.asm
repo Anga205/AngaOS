@@ -1,7 +1,8 @@
 [bits 32]         ; 32-bit protected mode (modern x86 mode)
 [extern main]     ; Declare the external symbol 'main' (our kernel's entry point)
+global _start
 
-start:
+_start:
     ; Set up the stack
     mov esp, kernel_stack + 4096 ; ESP = Stack Pointer
     ; We're setting the stack pointer to the top of the kernel stack

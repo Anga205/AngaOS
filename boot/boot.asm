@@ -34,7 +34,7 @@ mov bx, 0x1000    ; ES:BX = where to load kernel (0x1000:0x0)
 mov es, bx        ; ES = segment (0x1000)
 mov bx, 0x0       ; BX = offset (0x0)
 
-mov dh, 0x04      ; Read 4 sectors (2KB kernel)
+mov dh, 0x20      ; Read 32 sectors (14KB kernel)
 call disk_load    ; call the disk_load function to load the kernel
 ; If disk_load returns, we assume it was successful
 ; If it fails, it will print an error message and hang
