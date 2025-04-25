@@ -5,9 +5,35 @@ void main() {
     clear_screen(); // Clear the screen to start fresh
     print_logo();   // Print the AngaOS logo
     
-    while(1) {
-        // Infinite loop to keep the kernel running
-        // TODO: Add command processing logic here
+    char command[100];
+
+    while (1) {
+        print_string("\nAngaOS> ");
+        read_string(command);
+
+        if (strcmp(command, "ls") == 0) {
+            print_string("Listing directory contents...\n");
+        } else if (strncmp(command, "cd ", 3) == 0) {
+            print_string("Changing directory to ");
+            print_string(command + 3);
+            print_string("\n");
+        } else if (strncmp(command, "mkdir ", 6) == 0) {
+            print_string("Creating directory ");
+            print_string(command + 6);
+            print_string("\n");
+        } else if (strncmp(command, "touch ", 6) == 0) {
+            print_string("Creating file ");
+            print_string(command + 6);
+            print_string("\n");
+        } else if (strncmp(command, "rm ", 3) == 0) {
+            print_string("Removing ");
+            print_string(command + 3);
+            print_string("\n");
+        } else {
+            print_string("Unknown command: ");
+            print_string(command);
+            print_string("\n");
+        }
     }
 }
 

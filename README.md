@@ -13,7 +13,9 @@
 
 
 # AngaOS
-This project is still under development, but i've added some basic features like `ls`, `mkdir`, `cd`, `rmdir`, `create` & `delete`, and they all do exactly what you think they do, and should work they same as on linux
+This project is still under development, but i've added some basic features like `ls`, `mkdir`, `cd`, `rm` & `touch`, and they all do exactly what you think they do, and should work they same as on linux
+
+Most of the code is self documenting and i've tried to make the comments as easy to understand as possible, but if you are a beginner and need help, feel free to contact me :D
 
 ## Building AngaOS
 - Before building and running AngaOS, ensure you have NASM, GCC, QEMU and GNU make installed
@@ -23,3 +25,7 @@ make
 make run
 ```
 This will launch QEMU and boot the OS image.
+
+## Preview
+
+![AngaOS Preview](https://cloud.anga.pro/i/97hl2n1md1yw/preview.png)
