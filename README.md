@@ -28,4 +28,4 @@ This will launch QEMU and boot the OS image.
 
 ## Preview
 
-![AngaOS Preview](https://cloud.anga.pro/i/97hl2n1md1yw/preview.png)
+![AngaOS Preview](https://i.anga.codes/i/97hl2n1md1yw/preview.png)
