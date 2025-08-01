@@ -30,14 +30,20 @@ mov si, hello_msg ; SI stands for "Source Index" - it's one of the general-purpo
 call print_string ; call the print_string function to print it out
 
 ; 💾 Load Kernel from disk
+mov si, loading_msg
+call print_string
+
 mov bx, 0x1000    ; ES:BX = where to load kernel (0x1000:0x0)
 mov es, bx        ; ES = segment (0x1000)
 mov bx, 0x0       ; BX = offset (0x0)
 
-mov dh, 0x20      ; Read 32 sectors (14KB kernel)
+mov dh, 0x1E      ; Read 30 sectors (15KB kernel) - reduced from 32
 call disk_load    ; call the disk_load function to load the kernel
 ; If disk_load returns, we assume it was successful
 ; If it fails, it will print an error message and hang
+
+mov si, kernel_loaded_msg
+call print_string
 
 ; Switch to Protected Mode
 cli               ; Disable interrupts before changing CPU mode
@@ -46,13 +52,24 @@ mov eax, cr0      ; Read control register 0
 or eax, 0x1       ; Set PE (Protection Enable) bit
 mov cr0, eax
 
+; Jump to protected mode - we'll do the segment setup in kernel
+jmp CODE_SEG:init_pm
 
-jmp CODE_SEG:protected_start ; Jump to protected mode code
+[bits 32]      ; Switch to 32-bit mode
+init_pm:
+    mov ax, DATA_SEG  ; Setup data segments
+    mov ds, ax
+    mov es, ax
+    mov ss, ax
+    
+    jmp CODE_SEG:0x10000  ; Far jump to kernel at 0x10000 with proper code segment
 
 ; ------------------- Data -------------------
 ; Where we define our strings
 hello_msg db 'AngaOS Booting...', 0
-disk_error_msg db 'Disk Load Fail', 0
+loading_msg db 13, 10, 'Loading kernel...', 0
+kernel_loaded_msg db 13, 10, 'Kernel loaded, switching to protected mode...', 0
+disk_error_msg db 13, 10, 'Disk Load Fail', 0
 
 ; ------------------- Utilities -------------------
 %include "boot/print.asm"
@@ -62,12 +79,3 @@ disk_error_msg db 'Disk Load Fail', 0
 ; Bootloader Signature
 times 510-($-$$) db 0  ; Padding to 510 bytes
 dw 0xAA55              ; Boot signature (0xAA55) - this is what the BIOS looks for to know if this is a bootable disk
-
-[bits 32]      ; Switch to 32-bit mode
-protected_start:
-    mov ax, DATA_SEG  ; Setup data segments
-    mov ds, ax
-    mov es, ax
-    mov ss, ax
-    
-    jmp CODE_SEG:0x10000  ; Proper protected mode jump to kernel

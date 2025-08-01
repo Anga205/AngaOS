@@ -22,15 +22,18 @@ boot/boot.bin:
 kernel/kernel_entry.o: kernel/kernel_entry.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
+kernel/kernel_asm.o: kernel/kernel_asm.asm
+	$(ASM) $(ASMFLAGS) $< -o $@
+
 kernel/kernel.o: kernel/kernel.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 kernel/screen.o: kernel/screen.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Link the kernel
-kernel.bin: kernel/kernel_entry.o kernel/kernel.o kernel/screen.o
-	ld -m elf_i386 -o kernel.bin -Ttext 0x10000 -e _start $^
+# Link the kernel - now includes assembly kernel
+kernel.bin: kernel/kernel_entry.o kernel/kernel_asm.o kernel/kernel.o
+	ld -m elf_i386 -o kernel.bin -Ttext 0x10000 -e kernel_entry $^
 
 # Run the OS in QEMU
 run:

@@ -14,19 +14,25 @@
 
 disk_load:
     pusha                ; Save all registers
-    push dx              ; Save the drive number
-
+    
+    ; Save the number of sectors to read before we overwrite dh
+    mov bl, dh           ; BL = Number of sectors to read (backup)
+    
     mov ah, 0x02         ; Set AH to 0x02 for BIOS read sectors function
-    mov al, dh           ; AL = Number of sectors to read
+    mov al, bl           ; AL = Number of sectors to read
     mov ch, 0x00         ; CH = Cylinder number (set to 0)
     mov dh, 0x00         ; DH = Head number (set to 0)
     mov cl, 0x02         ; CL = Sector number (set to 2, as sector numbering starts at 1)
+    mov dl, 0x00         ; DL = Drive number (floppy A)
+    
     int 0x13             ; Call BIOS interrupt to read sectors
 
     jc .error            ; If the carry flag is set, an error occurred
-    pop dx               ; Restore the drive number
-    cmp al, dh           ; Check if the number of sectors read matches the requested number
+    
+    ; Compare sectors read (AL) with sectors requested (BL)
+    cmp al, bl           ; Check if the number of sectors read matches the requested number
     jne .error           ; If not, jump to the error handler
+    
     popa                 ; Restore all registers
     ret                  ; Return to the caller
 
